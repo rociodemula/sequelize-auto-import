@@ -2,6 +2,7 @@
 
 var path = require('path'),
     fs = require('fs'),
+    Sequelize = require('sequelize'),
     assign = require('object-assign'),
     snakeCase = require('snake-case');
 
@@ -174,7 +175,7 @@ function importModel(sequelize, _schema, SEPARATOR, pureFileName, absolutePathTo
   defineCall = require(absolutePathToFile); // eslint-disable-line global-require
 
   // call sequelize.import with a custom function to be able to pass schema's name value
-  model = sequelize.import(pathFile, function(seqInstance, Datatypes) {
+  model = require(pathFile, function(seqInstance, Datatypes) {
     return defineCall(seqInstance, Datatypes, {
       schema: schema,
       schemaName: schema || '',
@@ -186,7 +187,7 @@ function importModel(sequelize, _schema, SEPARATOR, pureFileName, absolutePathTo
       completeTableName: completeTableName,
       separator: SEPARATOR
     });
-  });
+  })(sequelize, Sequelize);
 
   loadedModels.push(model);
 
